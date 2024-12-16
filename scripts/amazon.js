@@ -1,4 +1,4 @@
-import { cart } from '../data/cart.js';
+import { cart, addToCart, showAddMessage } from '../data/cart.js';
 import { products } from '../data/products.js';
 
 
@@ -61,52 +61,27 @@ products.forEach((product) => {
 
 const gridElement = document.querySelector('.js-products-grid');
 gridElement.innerHTML = productsHtml;
-
-
-
-const selectElement = document.querySelector('.js-quantity-selector');
-
 let timeoutId;
 let cartQuantity = 0;
 
-document.querySelectorAll('.js-add-to-cart').forEach((button) => {
 
+function updateCartQuantity(selectedQuantity) {
+    cartQuantity += selectedQuantity;
+    document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
+}
+
+
+document.querySelectorAll('.js-add-to-cart').forEach((button) => {
     button.addEventListener('click', () => {
 
+        const { productId } = button.dataset;
         const productContainer = button.closest('.product-container');
         const quantitySelect = productContainer.querySelector('.js-quantity-selector');
         const addedToCartMessage = productContainer.querySelector('.added-to-cart');
         const selectedQuantity = parseInt(quantitySelect.value, 10);
-
-
-
-        if (addedToCartMessage.timeoutId) {
-            clearTimeout(addedToCartMessage.timeoutId);
-        }
-        addedToCartMessage.style.opacity = 1;
-        addedToCartMessage.timeoutId = setTimeout(() => {
-            addedToCartMessage.style.opacity = 0;
-        }, 1500);
-
-
-
-        const { productId } = button.dataset;
-        const matchingItem = cart.find(item => item.productId === productId);
-
-        if (matchingItem) {
-            matchingItem.quantity += selectedQuantity
-        } else {
-
-            cart.push({
-                productId: productId,
-                quantity: selectedQuantity,
-            });
-        }
-        cartQuantity += selectedQuantity;
-
-        document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
-
-
+        addToCart(productId, selectedQuantity);
+        updateCartQuantity(selectedQuantity);
+        showAddMessage(addedToCartMessage);
     });
 });
 
