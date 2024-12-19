@@ -1,4 +1,4 @@
-import { cart, addToCart, showAddMessage } from '../data/cart.js';
+import { cart, addToCart, showAddMessage, updateCheckoutQuantity } from '../data/cart.js';
 import { products } from '../data/products.js';
 import { formatCurrency } from "./utils/money.js"
 
@@ -64,14 +64,18 @@ products.forEach((product) => {
 const gridElement = document.querySelector('.js-products-grid');
 gridElement.innerHTML = productsHtml;
 let timeoutId;
-let cartQuantity = 0;
 
 
-function updateCartQuantity(selectedQuantity) {
-    const totalQuantity = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
-    document.querySelector('.js-cart-quantity').innerHTML = totalQuantity;
-}
 
+
+localStorage.setItem('cartQuantity', updateCheckoutQuantity());
+
+document.addEventListener('DOMContentLoaded', () => {
+    const savedQuantity = localStorage.getItem('cartQuantity');
+    if (savedQuantity) {
+        document.querySelector('.js-cart-quantity').innerHTML = savedQuantity;
+    }
+});
 
 document.querySelectorAll('.js-add-to-cart').forEach((button) => {
     button.addEventListener('click', () => {
@@ -82,7 +86,7 @@ document.querySelectorAll('.js-add-to-cart').forEach((button) => {
         const addedToCartMessage = productContainer.querySelector('.added-to-cart');
         const selectedQuantity = parseInt(quantitySelect.value, 10);
         addToCart(productId, selectedQuantity);
-        updateCartQuantity(selectedQuantity);
+        document.querySelector('.js-cart-quantity').innerHTML = updateCheckoutQuantity();
         showAddMessage(addedToCartMessage);
     });
 });
