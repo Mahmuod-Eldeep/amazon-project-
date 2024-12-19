@@ -68,8 +68,8 @@ let cartQuantity = 0;
 
 
 function updateCartQuantity(selectedQuantity) {
-    cartQuantity += selectedQuantity;
-    document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
+    const totalQuantity = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+    document.querySelector('.js-cart-quantity').innerHTML = totalQuantity;
 }
 
 
