@@ -63,7 +63,6 @@ products.forEach((product) => {
 
 const gridElement = document.querySelector('.js-products-grid');
 gridElement.innerHTML = productsHtml;
-let timeoutId;
 
 
 

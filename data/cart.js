@@ -30,7 +30,15 @@ export function addToCart(productId, selectedQuantity) {
     }
     saveToCart();
 }
+export function updateQuantity(productId, selectedQuantity) {
 
+    const matchingItem = cart.find(cartItem => cartItem.productId === productId);
+
+    matchingItem.quantity = selectedQuantity
+
+    saveToCart();
+
+}
 
 export function showAddMessage(addedToCartMessage) {
     if (addedToCartMessage.timeoutId) {

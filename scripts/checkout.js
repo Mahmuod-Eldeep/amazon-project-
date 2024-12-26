@@ -1,4 +1,4 @@
-import { cart, removeFromCart, updateCheckoutQuantity } from "../data/cart.js";
+import { cart, removeFromCart, updateCheckoutQuantity, updateQuantity } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js"
 
@@ -36,10 +36,10 @@ cart.forEach((cartItem) => {
             </div>
             <div class="product-quantity">
             <span>
-                Quantity: <span class="quantity-label">${cartItem.quantity}</span>
+                Quantity: <span class="quantity-label js-quantity-label">${cartItem.quantity}</span>
             </span>
-            <span class="update-quantity-link link-primary">
-                Update
+            <span class="update-quantity-link link-primary js-update-link" data-product-id="${matchingProduct.id}">
+                Update 
             </span>
             <span class="delete-quantity-link link-primary 
             js-delete-link" data-product-id="${matchingProduct.id}" >
@@ -102,10 +102,36 @@ document.querySelectorAll('.js-delete-link')
             const productId = link.dataset.productId;
             removeFromCart(productId);
             const container = document.querySelector(`.js-cart-item-container-${productId}`);
-            container
+
             container.remove();
             document.querySelector('.js-return-to-home-link').innerHTML = updateCheckoutQuantity() + ' items';
         });
     });
+document.querySelectorAll('.js-update-link').forEach((link) => {
+    link.addEventListener('click', () => {
+        const productId = link.dataset.productId;
+        console.log('Product ID:', productId);
+        const container = document.querySelector(`.js-cart-item-container-${productId}`);
+
+        const quantityLabel = container.querySelector('.js-quantity-label');
+        const updateLink = link.textContent.trim();
+
+        if (updateLink === "Update") {
+            // تحويل النص إلى مربع إدخال
+            const currentQuantity = quantityLabel.textContent.trim(); // الحصول على الكمية الحالية
+            quantityLabel.innerHTML = `<input type="number" class="quantity-input" value="${currentQuantity}" min="1" style="width: 50px;">`;
+            link.textContent = "Save";
+        } else if (updateLink === "Save") {
+
+            const quantityInput = container.querySelector('.quantity-input');
+            const newQuantity = Number(quantityInput.value.trim()); // تحويل النص إلى رقم
+            quantityLabel.innerHTML = newQuantity;
+            link.textContent = "Update";
+            updateQuantity(productId, newQuantity);
+            document.querySelector('.js-return-to-home-link').innerHTML = updateCheckoutQuantity() + ' items';
+
+        }
+    });
+});
 
 
