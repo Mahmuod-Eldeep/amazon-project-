@@ -1,4 +1,4 @@
-import { cart, removeFromCart, updateCheckoutQuantity, updateQuantity } from "../data/cart.js";
+import { cart, removeFromCart, updateCheckoutQuantity, updateQuantity, updateDeliveryOpyion } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js"
 import dayjs from 'https://unpkg.com/dayjs@1.11.10/esm/index.js'
@@ -91,7 +91,9 @@ function deliveryOptionsHTML(matchingProduct, cartItem) {
 
         html +=
             ` 
-        <div class="delivery-option">
+        <div class="delivery-option js-delivery-option"
+          data-product-id = "${matchingProduct.id}"
+          data-delivery-option-id ="${deliveryOption.id}" >
             <input type="radio"  ${isChecked ? 'checked' : ''}
         class="delivery-option-input" name = "delivery-option-${matchingProduct.id}" >
             <div>
@@ -121,7 +123,7 @@ document.querySelectorAll('.js-delete-link')
         link.addEventListener('click', () => {
             const productId = link.dataset.productId;
             removeFromCart(productId);
-            const container = document.querySelector(`.js - cart - item - container - ${productId} `);
+            const container = document.querySelector(`.js-cart-item-container-${productId}`);
 
             container.remove();
             document.querySelector('.js-return-to-home-link').innerHTML = updateCheckoutQuantity() + ' items';
@@ -131,7 +133,7 @@ document.querySelectorAll('.js-update-link').forEach((link) => {
     link.addEventListener('click', () => {
         const productId = link.dataset.productId;
         console.log('Product ID:', productId);
-        const container = document.querySelector(`.js - cart - item - container - ${productId} `);
+        const container = document.querySelector(`.js-cart-item-container-${productId}`);
 
         const quantityLabel = container.querySelector('.js-quantity-label');
         const updateLink = link.textContent.trim();
@@ -155,3 +157,13 @@ document.querySelectorAll('.js-update-link').forEach((link) => {
 });
 
 
+
+
+document.querySelectorAll('.js-delivery-option').forEach((element) => {
+    element.addEventListener('click', () => {
+        // const productId = element.dataset.productId
+        // const  deliveryOptionId = element.dataset.deliveryOptionId 
+        const { productId, deliveryOptionId } = element.dataset; // Shorthand Property
+        updateDeliveryOpyion(productId, deliveryOptionId);
+    });
+});
