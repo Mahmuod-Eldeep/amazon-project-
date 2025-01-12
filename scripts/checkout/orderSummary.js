@@ -2,8 +2,10 @@ import { cart, removeFromCart, updateCheckoutQuantity, updateQuantity, updateDel
 import {   getProduct } from "../../data/products.js";
 import { formatCurrency } from "../utils/money.js"
 import dayjs from 'https://unpkg.com/dayjs@1.11.10/esm/index.js'
-import { deliveryOptions  , getDeliveryOptionById} from '../../data/deliveryOptions.js'
+import { deliveryOptions  , getDeliveryOptionById , calculateDeliveryDate} from '../../data/deliveryOptions.js'
 import {  renderPaymentSummary } from './paymentSummary.js';
+import { renderCheckoutHeader } from './checkoutHeader.js';
+
 
 
 
@@ -21,10 +23,7 @@ export function renderOrderSummary() {
         const deliveryOptionId = cartItem.deliveryOptionsId;
         const deliveryOption = getDeliveryOptionById(deliveryOptionId);
       
-        const today = dayjs();
-        const deliveryDate = today.add(deliveryOption.deliveryDays, 'days');
-        const dateString = deliveryDate.format('dddd, MMMM D');
-
+          const dateString = calculateDeliveryDate(deliveryOption);
 
             cartSummaryHTML += `
         <div class="cart-item-container
@@ -73,11 +72,9 @@ export function renderOrderSummary() {
         function deliveryOptionsHTML(matchingProduct, cartItem) {
             let html = ``;
             deliveryOptions.forEach((deliveryOption) => {
-                const today = dayjs();
-                const deliveryDate = today.add(deliveryOption.deliveryDays, 'days');
-                const dateString = deliveryDate.format('dddd, MMMM D');
-                const priceString = deliveryOption.priceCents === 0 ? 'FREE' : `$${formatCurrency(deliveryOption.priceCents)} -`
-                const isChecked = deliveryOption.id === cartItem.deliveryOptionsId;
+               const dateString = calculateDeliveryDate(deliveryOption);
+               const priceString = deliveryOption.priceCents === 0 ? 'FREE' : `$${formatCurrency(deliveryOption.priceCents)} -`
+               const isChecked = deliveryOption.id === cartItem.deliveryOptionsId;
 
 
 
@@ -108,7 +105,7 @@ export function renderOrderSummary() {
 
         document.querySelector('.js-order-summary').innerHTML = cartSummaryHTML;
 
-        document.querySelector('.js-return-to-home-link').innerHTML = updateCheckoutQuantity() + ' items';
+       
 
 
         document.querySelectorAll('.js-delete-link')
@@ -116,38 +113,32 @@ export function renderOrderSummary() {
                 link.addEventListener('click', () => {
                     const productId = link.dataset.productId;
                     removeFromCart(productId);
-                    const container = document.querySelector(`.js-cart-item-container-${productId}`);
-
-                    container.remove();
-                    document.querySelector('.js-return-to-home-link').innerHTML = updateCheckoutQuantity() + ' items';
-                renderPaymentSummary();
+                    renderPaymentSummary();
+                    renderOrderSummary();
+                    renderCheckoutHeader();
+              
 
                 });
             });
         document.querySelectorAll('.js-update-link').forEach((link) => {
             link.addEventListener('click', () => {
                 const productId = link.dataset.productId;
-                console.log('Product ID:', productId);
                 const container = document.querySelector(`.js-cart-item-container-${productId}`);
-
                 const quantityLabel = container.querySelector('.js-quantity-label');
                 const updateLink = link.textContent.trim();
-
                 if (updateLink === "Update") {
                     const currentQuantity = quantityLabel.textContent.trim();
                     quantityLabel.innerHTML = `<input type = "number" class="quantity-input" value = "${currentQuantity}" min = "1" style = "width: 50px;" > `;
                     link.textContent = "Save";
                 } else if (updateLink === "Save") {
-
                     const quantityInput = container.querySelector('.quantity-input');
                     const newQuantity = Number(quantityInput.value.trim());
                     quantityLabel.innerHTML = newQuantity;
                     link.textContent = "Update";
                     updateQuantity(productId, newQuantity);
-                    document.querySelector('.js-return-to-home-link').innerHTML = updateCheckoutQuantity() + ' items';
-
                 }
                 renderPaymentSummary();
+                renderCheckoutHeader();
             
             });
         });
