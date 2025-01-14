@@ -31,13 +31,29 @@ export const deliveryOptions = [{
 
 
 
+function isWeekend(date) {
+  const dayOfWeek = date.day();
+  return dayOfWeek === 0 || dayOfWeek === 6; // 0 = Saturday, 6 = Sunday
+}
+
+
+
 
 export function calculateDeliveryDate(deliveryOption) {
   const today = dayjs();
-  const deliveryDate = today.add(
-    deliveryOption.deliveryDays,
-    'days'
-  );                                                                                                 
+let remainingDays = deliveryOption.deliveryDays;
+let deliveryDate = today;
+
+
+
+
+while(remainingDays > 0) {
+    deliveryDate = deliveryDate.add(1, 'day');
+    if(!isWeekend(deliveryDate)) {
+        remainingDays--;
+    }
+  }
+  
   const dateString = deliveryDate.format(
     'dddd, MMMM D'
   );
