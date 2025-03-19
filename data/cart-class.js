@@ -2,26 +2,19 @@ class Cart {
 
 
 
-    cartItems ; 
-    localStorageKey = undefined;
+    cartItems;
+    #localStorageKey = undefined;
 
 
-constructor(localStorageKey) {
+    constructor(localStorageKey) {
 
-    this.localStorageKey = localStorageKey;
-    this.loadFromStorage();
-}
-
-
+        this.#localStorageKey = localStorageKey;
+        this.#loadFromStorage();
+    }
 
 
-
-
-
-
-
-    loadFromStorage() {
-        this.cartItems = JSON.parse(localStorage.getItem(this.localStorageKey));
+    #loadFromStorage() {
+        this.cartItems = JSON.parse(localStorage.getItem(this.#localStorageKey));
 
         if (!this.cartItems) {
             this.cartItems = [{
@@ -37,14 +30,14 @@ constructor(localStorageKey) {
         }
     }
 
-    
+
     saveToCart() {
-        localStorage.setItem(this.localStorageKey, JSON.stringify(this.cartItems));
+        localStorage.setItem(this.#localStorageKey, JSON.stringify(this.cartItems));
     }
 
 
     addToCart(productId, selectedQuantity) {
-    
+
         const matchingItem = this.cartItems.find(cartItem => cartItem.productId === productId);
 
         if (matchingItem) {
@@ -96,15 +89,15 @@ constructor(localStorageKey) {
     updateQuantity(productId, selectedQuantity) {
 
         const matchingItem = this.cartItems.find(cartItem => cartItem.productId === productId);
-    
-        matchingItem.quantity = selectedQuantity
-    
-        this.csaveToCart();
-    
-    }
-    
 
-     showAddMessage(addedToCartMessage) {
+        matchingItem.quantity = selectedQuantity
+
+        this.csaveToCart();
+
+    }
+
+
+    showAddMessage(addedToCartMessage) {
         if (addedToCartMessage.timeoutId) {
             clearTimeout(addedToCartMessage.timeoutId);
         }
@@ -112,24 +105,23 @@ constructor(localStorageKey) {
         addedToCartMessage.timeoutId = setTimeout(() => {
             addedToCartMessage.style.opacity = 0;
         }, 1500);
-    
+
     }
 
-     updateCheckoutQuantity() {
+    updateCheckoutQuantity() {
         const totalQuantity = this.cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
         return totalQuantity;
     }
 
 }
-    const cart = new Cart('cart-oop');
-    const businessCart = new Cart('business-cart-oop');
+const cart = new Cart('cart-oop');
+const businessCart = new Cart('business-cart-oop');
 
-    console.log(cart); 
-    console.log(businessCart);
+console.log(cart);
+console.log(businessCart);
 
 
-    
-    
-    
-    
-    
+
+
+
+
