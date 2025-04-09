@@ -75,6 +75,7 @@ xhr.addEventListener("load", () => {
      return new Product(productDetails);
     });
   fun();
+  console.log('loaded products');
 })
 
 
