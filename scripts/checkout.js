@@ -1,7 +1,7 @@
 import { renderOrderSummary } from "./checkout/orderSummary.js";
 import { renderPaymentSummary } from "./checkout/paymentSummary.js";
 import { renderCheckoutHeader } from "./checkout/checkoutHeader.js";
-import { loadProducts } from "../data/products.js";
+import { loadProducts , loadProductsFetch } from "../data/products.js";
 import { loadCart } from "../data/cart.js";
 // import '../data/cart-class.js';
 // import '../data/backend.js';
@@ -9,11 +9,8 @@ import { loadCart } from "../data/cart.js";
 
 
 Promise.all([
-  new Promise((resolve) => {
-    loadProducts(() => {
-      resolve('value09');
-    });
-  }),
+ loadProductsFetch(),
+
    new Promise((resolve) => {
      loadCart(() => {
       resolve();
