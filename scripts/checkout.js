@@ -7,8 +7,27 @@ import { loadCart } from "../data/cart.js";
 // import '../data/backend.js';
 
 async function loadPage() {
+  await Promise.all([
+    loadProductsFetch(),
+    new Promise((resolve) => {
+      loadCart(() => {
+        resolve();
+      });
+    }),
+  ]);
+
+  renderOrderSummary();
+  renderPaymentSummary();
+  renderCheckoutHeader();
+}
+
+loadPage();
+
+
+/*
+async function loadPage() {
   await loadProductsFetch();
-  const value = await new Promise((resolve) => {
+ const value =  await new Promise((resolve) => {
     loadCart(() => {
       resolve();
     });
@@ -17,7 +36,7 @@ async function loadPage() {
   renderPaymentSummary();
   renderCheckoutHeader();
 }
-loadPage();
+*/
 
 /*
 Promise.all([
