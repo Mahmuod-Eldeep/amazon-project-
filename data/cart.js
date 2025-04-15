@@ -74,6 +74,11 @@ export function removeFromCart(productId) {
   saveToCart();
 }
 
+export function updateCartAfterOrder() {
+  cart = [];
+  saveToCart();
+}
+
 export function updateCheckoutQuantity() {
   const totalQuantity = cart.reduce(
     (sum, item) => sum + (item.quantity || 0),
@@ -102,7 +107,7 @@ export function updateDeliveryOpyion(productId, deliveryOptionId) {
 
 export function loadCart(fun) {
   const xhr = new XMLHttpRequest();
-  
+
   xhr.addEventListener("load", () => {
     console.log(xhr.response);
     fun();

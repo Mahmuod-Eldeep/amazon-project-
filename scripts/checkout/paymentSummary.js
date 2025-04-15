@@ -1,4 +1,8 @@
-import { cart, updateCheckoutQuantity } from "../../data/cart.js";
+import {
+  cart,
+  updateCartAfterOrder,
+  updateCheckoutQuantity,
+} from "../../data/cart.js";
 import { getProduct } from "../../data/products.js";
 import { formatCurrency } from "../utils/money.js";
 import { getDeliveryOptionById } from "../../data/deliveryOptions.js";
@@ -76,6 +80,7 @@ export function renderPaymentSummary() {
         });
         const order = await response.json();
         addOrder(order);
+        updateCartAfterOrder();
       } catch (error) {
         console.log("unexpected error  try again later");
       }

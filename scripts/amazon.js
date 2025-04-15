@@ -7,6 +7,16 @@ import {
 import { products, loadProducts } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 
+
+document.addEventListener("DOMContentLoaded", () => {
+  const savedQuantity = localStorage.getItem("cartQuantity");
+  if (savedQuantity) {
+    document.querySelector(".js-cart-quantity").innerHTML = savedQuantity;
+  }
+});
+
+
+
 loadProducts(renderProducts);
 
 function renderProducts() {
@@ -71,12 +81,7 @@ function renderProducts() {
   const gridElement = document.querySelector(".js-products-grid");
   gridElement.innerHTML = productsHtml;
   localStorage.setItem("cartQuantity", updateCheckoutQuantity());
-  document.addEventListener("DOMContentLoaded", () => {
-    const savedQuantity = localStorage.getItem("cartQuantity");
-    if (savedQuantity) {
-      document.querySelector(".js-cart-quantity").innerHTML = savedQuantity;
-    }
-  });
+ 
   document.querySelectorAll(".js-add-to-cart").forEach((button) => {
     button.addEventListener("click", () => {
       const { productId } = button.dataset;
